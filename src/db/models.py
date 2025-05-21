@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import List, Optional
 
 import sqlalchemy.dialects.postgresql as pg
+
 from sqlmodel import Column, Field, Relationship, SQLModel
 
 
@@ -72,6 +73,12 @@ class Book(SQLModel, table=True):
     reviews: List["Review"] = Relationship(
         back_populates="book", sa_relationship_kwargs={"lazy": "selectin"}
     )
+    tags: List[Tag] = Relationship(
+        link_model=BookTag,
+        back_populates="books",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
+
     tags: List[Tag] = Relationship(
         link_model=BookTag,
         back_populates="books",

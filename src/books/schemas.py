@@ -6,6 +6,11 @@ from typing import List
 from src.tags.schemas import TagModel
 from src.reviews.schemas import ReviewModel
 
+from typing import List
+
+from src.tags.schemas import TagModel
+from src.reviews.schemas import ReviewModel
+
 class Book(BaseModel):
     uid:uuid.UUID
     title:str
