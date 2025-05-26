@@ -11,6 +11,7 @@ from src.db.models import Review
 
 from .schemas import ReviewCreateModel
 
+from src.errors import (BookNotFound,UserNotFound,)
 
 book_service=BookService()
 user_service=UserService()
@@ -30,11 +31,9 @@ class ReviewService:
             new_review=Review(**review_data_dict)
             
             if not book:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Book not found")
+                raise BookNotFound()
             if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,detail="User not found"
-                )
+                raise UserNotFound()
             new_review.user=user
             new_review.book=book
 

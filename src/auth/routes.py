@@ -9,6 +9,8 @@ from fastapi.responses import JSONResponse
 from datetime import timedelta,datetime
 from .dependencies import RefreshTokenBearer,AccessTokenBearer,RoleChecker,get_current_user
 from src.db.redis import add_jti_to_blocklist
+from src.errors import InvalidCredentials,UserAlreadyExists
+
 
 
 auth_router = APIRouter()
@@ -28,10 +30,7 @@ async def create_user_account(
     user_exists = await user_service.user_exists(email, session)
 
     if user_exists:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User with email already exists",
-        )
+        raise UserAlreadyExists()
     new_user = await user_service.create_user(user_data, session)
 
     return new_user
@@ -70,11 +69,7 @@ async def login_users(
                 }
             }
         )
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid Email or Password"
-        )
-
+    raise InvalidCredentials()
 
 @auth_router.get("/refresh_token")
 async def get_new_acess_token(token_details:dict=Depends(RefreshTokenBearer())):

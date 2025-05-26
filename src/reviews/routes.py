@@ -8,6 +8,7 @@ from src.db.models import User
 from .schemas import ReviewCreateModel
 from .service import ReviewService
 
+from src.errors import BookNotFound
 review_service = ReviewService()
 review_router = APIRouter()
 
@@ -27,7 +28,7 @@ async def get_review(review_uid: str, session: AsyncSession = Depends(get_sessio
     book = await review_service.get_review(review_uid, session)
 
     if not book:
-        raise
+        raise BookNotFound()
 
 
 @review_router.post("/book/{book_uid}", dependencies=[user_role_checker])
