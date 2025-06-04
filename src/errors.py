@@ -1,7 +1,8 @@
-from typing  import Any, Callable
+from typing import Any, Callable
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI,status
+from fastapi import FastAPI, status
+
 
 class BooklyException(Exception):
     """This is the base class for all bookly errors"""
@@ -75,6 +76,12 @@ class UserNotFound(BooklyException):
     pass
 
 
+class AccountNotVerified(Exception):
+    """Exception raised when the user account is not verified."""
+
+    pass
+
+
 # Generate custom error handlers
 def create_exception_handler(
     status_code: int, initial_detail: Any
@@ -85,8 +92,8 @@ def create_exception_handler(
     return exception_handler
 
 
-
 from fastapi import FastAPI
+
 
 def register_error_handlers(app: FastAPI):
     app.add_exception_handler(
@@ -202,7 +209,17 @@ def register_error_handlers(app: FastAPI):
             },
         ),
     )
-
+    app.add_exception_handler(
+        AccountNotVerified,
+        create_exception_handler(
+            status_code=status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Account Not Verified",
+                "error_code": "account_not_verified",
+                "resolution": "Please check your email for verification details"
+            },
+        ),
+    )
 
 
     @app.exception_handler(500)
